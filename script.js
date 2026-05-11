@@ -91,12 +91,23 @@ function handleDrop(el) {
 function flashImage(src) {
   const overlay = document.getElementById('flashOverlay');
   const img = document.getElementById('flashImg');
+
+  // Anchor the flash on top of the pot, ~1.5x the pot's size
+  const potRect = potWrapper.getBoundingClientRect();
+  const size = Math.max(potRect.width, potRect.height) * 1.5;
+  const cx = potRect.left + potRect.width / 2;
+  const cy = potRect.top + potRect.height / 2;
+  overlay.style.width  = size + 'px';
+  overlay.style.height = size + 'px';
+  overlay.style.left   = (cx - size / 2) + 'px';
+  overlay.style.top    = (cy - size / 2) + 'px';
+
   img.src = src;
   overlay.classList.remove('visible');
-  void overlay.offsetWidth;
+  void overlay.offsetWidth;  // force reflow so the animation restarts
   overlay.classList.add('visible');
   clearTimeout(flashImage._t);
-  flashImage._t = setTimeout(() => overlay.classList.remove('visible'), 1100);
+  flashImage._t = setTimeout(() => overlay.classList.remove('visible'), 1400);
 }
 
 function flyToPot(el) {
