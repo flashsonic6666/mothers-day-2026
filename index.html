@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Making Mom — A Recipe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800;9..144,900&family=DM+Mono:wght@400;500&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf3e3;
+    --cream-dark: #f0e3c4;
+    --ink: #2a1a0f;
+    --burgundy: #7a2230;
+    --rose: #d96d7a;
+    --gold: #d4a14a;
+    --gold-deep: #a87425;
+    --moss: #5c6b3a;
+    --copper: #b8552c;
+    --steam: rgba(255, 250, 235, 0.85);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Fraunces', serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(212, 161, 74, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(122, 34, 48, 0.06) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.16 0 0 0 0 0.1 0 0 0 0 0.06 0 0 0 0.18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+  }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold-deep);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(48px, 8vw, 96px);
+    line-height: 0.95;
+    color: var(--burgundy);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  h1 .amp {
+    color: var(--gold);
+    font-weight: 400;
+  }
+
+  .tagline {
+    font-family: 'Caveat', cursive;
+    font-size: 24px;
+    color: var(--moss);
+    margin-top: 4px;
+  }
+
+  .ornament {
+    display: inline-block;
+    color: var(--gold);
+    font-size: 18px;
+    margin: 0 8px;
+  }
+
+  .kitchen {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr 1fr;
+    gap: 32px;
+    align-items: start;
+    margin-top: 24px;
+  }
+
+  @media (max-width: 1024px) {
+    .kitchen {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
+
+  .panel {
+    background: var(--cream);
+    border: 1.5px solid var(--ink);
+    border-radius: 4px;
+    padding: 22px 20px;
+    position: relative;
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+
+  .panel::before {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border: 1px dashed rgba(42, 26, 15, 0.25);
+    border-radius: 2px;
+    pointer-events: none;
+  }
+
+  .panel-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--burgundy);
+    margin-bottom: 4px;
+    text-align: center;
+  }
+
+  .panel-subtitle {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold-deep);
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .ingredient-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ingredient {
+    position: relative;
+    background: var(--cream-dark);
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    padding: 10px 16px 10px 42px;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 14.5px;
+    color: var(--ink);
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.2s cubic-bezier(.34,1.56,.64,1), box-shadow 0.2s, background 0.2s;
+    box-shadow: 2px 2px 0 var(--ink);
+    line-height: 1.3;
+  }
+
+  .ingredient:hover {
+    transform: translate(-1px, -2px) rotate(-1deg);
+    box-shadow: 4px 4px 0 var(--ink);
+    background: #fff5dc;
+  }
+
+  .ingredient:active {
+    cursor: grabbing;
+    transform: scale(1.03) rotate(2deg);
+  }
+
+  .ingredient.dragging {
+    opacity: 0.4;
+  }
+
+  .ingredient .num {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    background: var(--burgundy);
+    color: var(--cream);
+    border-radius: 50%;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ingredient.spice .num {
+    background: var(--gold-deep);
+  }
+
+  .ingredient.used {
+    opacity: 0.35;
+    pointer-events: none;
+    text-decoration: line-through;
+    text-decoration-color: var(--burgundy);
+  }
+
+  .spice-rack .ingredient {
+    background: linear-gradient(135deg, #f5d99a 0%, #e8b85f 100%);
+    font-style: italic;
+  }
+
+  .spice-icon {
+    margin-right: 6px;
+    font-size: 13px;
+  }
+
+  /* ============================================
+     POT — now uses an <img> element you can swap
+     ============================================ */
+  .stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding-top: 8px;
+  }
+
+  .pot-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    aspect-ratio: 1;
+  }
+
+  .pot-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.1s;
+    /* Slight drop shadow so the pot feels grounded */
+    filter: drop-shadow(4px 6px 0 rgba(42, 26, 15, 0.15));
+  }
+
+  /* Liquid color tint overlay — sits on top of pot image */
+  .pot-tint {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    /* This element is colored by JS to simulate liquid color change */
+    background: radial-gradient(ellipse 30% 8% at 50% 48%, var(--burgundy) 0%, transparent 70%);
+    opacity: 0.55;
+    mix-blend-mode: multiply;
+    transition: background 0.6s;
+  }
+
+  .pot-wrapper.dragover .pot-img {
+    transform: scale(1.03);
+  }
+
+  .pot-wrapper.shaking .pot-img,
+  .pot-wrapper.shaking .pot-tint {
+    animation: shake 0.5s infinite;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    10% { transform: translate(-4px, -2px) rotate(-2deg); }
+    20% { transform: translate(4px, -3px) rotate(2deg); }
+    30% { transform: translate(-3px, 2px) rotate(-1deg); }
+    40% { transform: translate(3px, -1px) rotate(1deg); }
+    50% { transform: translate(-2px, 3px) rotate(-2deg); }
+    60% { transform: translate(2px, 1px) rotate(2deg); }
+    70% { transform: translate(-3px, -2px) rotate(-1deg); }
+    80% { transform: translate(3px, 2px) rotate(1deg); }
+    90% { transform: translate(-2px, -3px) rotate(-2deg); }
+  }
+
+  .pot-wrapper.splash .pot-img {
+    animation: splash 0.5s ease-out;
+  }
+
+  @keyframes splash {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.08) translateY(-4px); }
+    100% { transform: scale(1); }
+  }
+
+  .steam-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(255,250,235,0.4));
+    animation: rise 2.2s ease-out forwards;
+    pointer-events: none;
+  }
+
+  @keyframes rise {
+    0% { transform: translateY(0) scale(0.3); opacity: 0; }
+    20% { opacity: 0.9; }
+    100% { transform: translateY(-200px) scale(1.4); opacity: 0; }
+  }
+
+  .speech {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 14px 20px;
+    border-radius: 18px;
+    font-family: 'Caveat', cursive;
+    font-size: 20px;
+    line-height: 1.3;
+    max-width: 320px;
+    text-align: center;
+    position: relative;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s, transform 0.4s;
+  }
+
+  .speech.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .speech::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid var(--ink);
+  }
+
+  .progress {
+    width: 100%;
+    max-width: 380px;
+    margin-top: 4px;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-deep);
+    margin-bottom: 6px;
+  }
+
+  .progress-bar {
+    height: 8px;
+    background: var(--cream-dark);
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--rose), var(--burgundy), var(--gold));
+    transition: width 0.6s cubic-bezier(.34,1.56,.64,1);
+    border-radius: 999px;
+  }
+
+  /* REVEAL */
+  .reveal {
+    position: fixed;
+    inset: 0;
+    background: var(--cream);
+    z-index: 100;
+    display: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .reveal.active {
+    display: block;
+    animation: fadeIn 1.2s ease-out;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .reveal-content {
+    min-height: 100vh;
+    padding: 60px 32px 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+  }
+
+  /* Optional mom portrait at top of reveal — see /images/mom.png */
+  .mom-portrait {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+    margin: 0 auto 16px;
+    display: block;
+    opacity: 0;
+    animation: popIn 0.8s cubic-bezier(.34,1.56,.64,1) 0.2s forwards;
+  }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.3) rotate(-10deg); }
+    to { opacity: 1; transform: scale(1) rotate(0); }
+  }
+
+  .reveal-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold-deep);
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: slideUp 0.8s ease-out 0.5s forwards;
+  }
+
+  .reveal h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(64px, 12vw, 140px);
+    line-height: 0.9;
+    color: var(--burgundy);
+    letter-spacing: -0.03em;
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: slideUp 1s ease-out 0.7s forwards;
+  }
+
+  .reveal h2 .voila {
+    display: block;
+    font-size: 0.5em;
+    color: var(--gold);
+    font-weight: 400;
+    font-style: italic;
+  }
+
+  .reveal-subtitle {
+    font-family: 'Caveat', cursive;
+    font-size: 28px;
+    color: var(--moss);
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: slideUp 0.8s ease-out 1.1s forwards;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .traits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .trait-card {
+    background: var(--cream);
+    border: 1.5px solid var(--ink);
+    border-radius: 4px;
+    padding: 18px 20px 18px 56px;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 16px;
+    text-align: left;
+    box-shadow: 4px 4px 0 var(--ink);
+    position: relative;
+    opacity: 0;
+    transform: translateY(20px) rotate(-1deg);
+    animation: cardIn 0.6s cubic-bezier(.34,1.56,.64,1) forwards;
+  }
+
+  .trait-card:nth-child(even) {
+    transform: translateY(20px) rotate(1deg);
+  }
+
+  @keyframes cardIn {
+    to { opacity: 1; transform: translateY(0) rotate(0); }
+  }
+
+  .trait-card .badge {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    background: var(--burgundy);
+    color: var(--cream);
+    border-radius: 50%;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .closing {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: clamp(20px, 3vw, 28px);
+    color: var(--ink);
+    max-width: 600px;
+    margin: 0 auto 32px;
+    line-height: 1.5;
+    opacity: 0;
+    animation: slideUp 1s ease-out 2s forwards;
+  }
+
+  .closing strong {
+    color: var(--burgundy);
+    font-weight: 900;
+  }
+
+  .restart {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    padding: 14px 28px;
+    cursor: pointer;
+    border-radius: 999px;
+    box-shadow: 4px 4px 0 var(--burgundy);
+    transition: transform 0.2s, box-shadow 0.2s;
+    opacity: 0;
+    animation: slideUp 0.8s ease-out 2.4s forwards;
+  }
+
+  .restart:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--burgundy);
+  }
+
+  .confetti {
+    position: absolute;
+    width: 10px;
+    height: 14px;
+    pointer-events: none;
+    animation: confettiFall 3s linear forwards;
+  }
+
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  .fly {
+    position: fixed;
+    pointer-events: none;
+    z-index: 50;
+    transition: all 0.6s cubic-bezier(.55, 0, .7, .5);
+  }
+
+  .instructions {
+    text-align: center;
+    margin-top: 12px;
+    font-family: 'Caveat', cursive;
+    font-size: 20px;
+    color: var(--gold-deep);
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="eyebrow">An Heirloom Recipe · Serves One Lifetime</div>
+    <h1>Making <span class="amp">&</span> Mom</h1>
+    <div class="tagline">~ a precise and entirely scientific procedure ~</div>
+  </header>
+
+  <div class="instructions">
+    <span class="ornament">✦</span>
+    Drag each ingredient into the pot ↓
+    <span class="ornament">✦</span>
+  </div>
+
+  <div class="kitchen">
+    <!-- LEFT: Core ingredients -->
+    <div class="panel">
+      <div class="panel-title">Essential Ingredients</div>
+      <div class="panel-subtitle">— Part I —</div>
+      <div class="ingredient-list" id="ingredients-left"></div>
+    </div>
+
+    <!-- CENTER: The Pot -->
+    <div class="stage">
+      <div class="pot-wrapper" id="potWrapper">
+        <!-- ============================================================
+             ★ THE POT GRAPHIC ★
+             Replace images/pot.png with your own drawing.
+             Recommended: transparent PNG or SVG, square (e.g. 800x800).
+             ============================================================ -->
+        <img class="pot-img" id="potImg" src="images/pot.png" alt="cooking pot" />
+
+        <!-- Liquid color tint — JS recolors this on each drop.
+             Adjust the .pot-tint CSS to match where your pot's opening is. -->
+        <div class="pot-tint" id="potTint"></div>
+
+        <!-- Steam/bubbles spawn here -->
+        <div class="steam-layer" id="steamLayer"></div>
+      </div>
+
+      <div class="speech" id="speech">Pot's empty. I'm ready when you are.</div>
+
+      <div class="progress">
+        <div class="progress-label">
+          <span>The Recipe</span>
+          <span id="progressText">0 / 15</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: More ingredients + spices -->
+    <div>
+      <div class="panel" style="margin-bottom: 24px;">
+        <div class="panel-title">More Ingredients</div>
+        <div class="panel-subtitle">— Part II —</div>
+        <div class="ingredient-list" id="ingredients-right"></div>
+      </div>
+      <div class="panel spice-rack">
+        <div class="panel-title">Pinches & Dashes</div>
+        <div class="panel-subtitle">— The Spice Rack —</div>
+        <div class="ingredient-list" id="spices"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REVEAL SCREEN -->
+<div class="reveal" id="reveal">
+  <div class="reveal-content">
+    <!-- ============================================================
+         ★ OPTIONAL MOM PORTRAIT ★
+         Drop a drawing at images/mom.png and it'll appear here.
+         If you don't have one, leave it — broken-image won't show
+         because we hide it on error (see JS at bottom).
+         ============================================================ -->
+    <img class="mom-portrait" id="momPortrait" src="images/mom.png" alt="" onerror="this.style.display='none'" />
+
+    <div class="reveal-eyebrow">★ The Recipe is Complete ★</div>
+    <h2>
+      <span class="voila">— Voilà —</span>
+      Mom.
+    </h2>
+    <div class="reveal-subtitle">assembled with love, witness her glory</div>
+
+    <div class="traits-grid" id="traitsGrid"></div>
+
+    <p class="closing">
+      Take one of each, simmer for several decades, garnish with infinite patience,
+      and you get <strong>the best mom in the world</strong>. ♡
+    </p>
+
+    <button class="restart" onclick="location.reload()">Make Her Again</button>
+  </div>
+</div>
+
+<script>
+  // ============ INGREDIENT DATA ============
+  const ingredients = [
+    { id: 1,  text: "Professional vibe coder",                    quip: "Vibes calibrated. Pot is now 4% cooler.",                  effect: "#7a2230" },
+    { id: 2,  text: "Proud Tesla owner",                          quip: "Adding silent horsepower. The simmer just got electric.",   effect: "#5c6b3a" },
+    { id: 3,  text: "Elon Musk superfan",                         quip: "Spicy. The pot has Opinions™ now.",                         effect: "#b8552c" },
+    { id: 4,  text: "Un-scammable",                               quip: "Scam-shield engaged. Nigerian princes weep.",               effect: "#7a2230" },
+    { id: 5,  text: "Consumed a cactus taco",                     quip: "A pinch of prickly bravery! Bold, bold flavor.",            effect: "#a87425" },
+    { id: 6,  text: "Backyard pickleball enthusiast",             quip: "*THWACK* Athletic spirit added. The lid is now dinking.",   effect: "#5c6b3a" },
+    { id: 7,  text: "Solved a Rubik's cube in 2 minutes",         quip: "Galaxy brain unlocked. The pot just sorted itself by color.", effect: "#7a2230" },
+    { id: 8,  text: "Recovered 2 contact lenses from sink drains", quip: "Plumbing valor! She fears no U-bend.",                     effect: "#5c6b3a" },
+    { id: 9,  text: "Went from enemies to friends with Joyce Holliday", quip: "Hugs added. Even the broth is forgiving now.",        effect: "#d96d7a" },
+    { id: 10, text: "Tracks birds in Big Brain Academy",          quip: "Tweet tweet. Spatial reasoning: maxed.",                    effect: "#5c6b3a" },
+    { id: 11, text: "Solves expert-level sudokus",                quip: "Logic units: +9. The pot now follows strict row constraints.", effect: "#7a2230" },
+    { id: 12, text: "Cooks very tasty 牛肉",                        quip: "Ahhh, the secret ingredient. The pot bows respectfully.",   effect: "#b8552c" },
+    { id: 13, text: 'Makes jokes like "Rock!... Paper!"',         quip: "Comedy gold detected. The pot is wheezing.",                effect: "#d4a14a" },
+    { id: 14, text: "Gives excellent life advice",                quip: "Sage essence infused. Pot now whispers wisdom.",            effect: "#5c6b3a" },
+    { id: 15, text: "Best mom in the world",                      quip: "Hold on. Hold ON. Something incredible is happening.",      effect: "#7a2230" },
+  ];
+
+  const spices = [
+    { id: 's1', icon: "🌶️", text: "Pinch of sass",         quip: "A pinch of sass! Now the pot has attitude." },
+    { id: 's2', icon: "✨", text: "Dash of magic",          quip: "Sparkles. Many sparkles. Disney-grade." },
+    { id: 's3', icon: "❤️", text: "Heaping cup of love",   quip: "The pot just blushed. Briefly." },
+    { id: 's4', icon: "😂", text: "Sprinkle of humor",     quip: "*chef's kiss* now we're cooking." },
+    { id: 's5', icon: "🧠", text: "Drizzle of wisdom",     quip: "Pot is now older and wiser. Five seconds older." },
+  ];
+
+  // ============ RENDERING ============
+  function makeIngredientCard(item, isSpice = false) {
+    const el = document.createElement('div');
+    el.className = 'ingredient' + (isSpice ? ' spice' : '');
+    el.draggable = true;
+    el.dataset.id = item.id;
+    el.dataset.text = item.text;
+    el.dataset.quip = item.quip;
+    el.dataset.effect = item.effect || '#7a2230';
+    el.dataset.isSpice = isSpice ? '1' : '0';
+    el.innerHTML = isSpice
+      ? `<span class="num">${String(item.id).replace('s','')}</span><span class="spice-icon">${item.icon}</span> ${item.text}`
+      : `<span class="num">${String(item.id).padStart(2, '0')}</span> ${item.text}`;
+    return el;
+  }
+
+  const leftCol = document.getElementById('ingredients-left');
+  const rightCol = document.getElementById('ingredients-right');
+  const spiceCol = document.getElementById('spices');
+
+  ingredients.slice(0, 8).forEach(i => leftCol.appendChild(makeIngredientCard(i)));
+  ingredients.slice(8).forEach(i => rightCol.appendChild(makeIngredientCard(i)));
+  spices.forEach(s => spiceCol.appendChild(makeIngredientCard(s, true)));
+
+  // ============ STATE ============
+  let droppedRealIngredients = 0;
+  const TOTAL = ingredients.length;
+  const usedSet = new Set();
+
+  const potWrapper = document.getElementById('potWrapper');
+  const potTint = document.getElementById('potTint');
+  const speech = document.getElementById('speech');
+  const steamLayer = document.getElementById('steamLayer');
+  const progressFill = document.getElementById('progressFill');
+  const progressText = document.getElementById('progressText');
+
+  let draggedEl = null;
+
+  document.querySelectorAll('.ingredient').forEach(el => {
+    el.addEventListener('dragstart', e => {
+      draggedEl = el;
+      el.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', el.dataset.id);
+    });
+    el.addEventListener('dragend', () => el.classList.remove('dragging'));
+    el.addEventListener('click', () => {
+      if (!el.classList.contains('used')) handleDrop(el);
+    });
+  });
+
+  potWrapper.addEventListener('dragover', e => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    potWrapper.classList.add('dragover');
+  });
+  potWrapper.addEventListener('dragleave', () => potWrapper.classList.remove('dragover'));
+  potWrapper.addEventListener('drop', e => {
+    e.preventDefault();
+    potWrapper.classList.remove('dragover');
+    if (draggedEl && !draggedEl.classList.contains('used')) handleDrop(draggedEl);
+  });
+
+  function handleDrop(el) {
+    const id = el.dataset.id;
+    if (usedSet.has(id)) return;
+    const isSpice = el.dataset.isSpice === '1';
+    const quip = el.dataset.quip;
+    const effect = el.dataset.effect;
+
+    flyToPot(el);
+    setTimeout(() => { el.classList.add('used'); usedSet.add(id); }, 50);
+
+    setTimeout(() => {
+      potWrapper.classList.add('splash');
+      setTimeout(() => potWrapper.classList.remove('splash'), 500);
+
+      // Recolor the tint overlay using the ingredient's effect color
+      potTint.style.background = `radial-gradient(ellipse 30% 8% at 50% 48%, ${effect} 0%, transparent 70%)`;
+
+      spawnBubbles(isSpice ? 10 : 6);
+      showSpeech(quip);
+
+      if (!isSpice) {
+        droppedRealIngredients++;
+        const pct = (droppedRealIngredients / TOTAL) * 100;
+        progressFill.style.width = pct + '%';
+        progressText.textContent = `${droppedRealIngredients} / ${TOTAL}`;
+        if (droppedRealIngredients === TOTAL) setTimeout(triggerFinale, 1400);
+      }
+    }, 550);
+  }
+
+  function flyToPot(el) {
+    const rect = el.getBoundingClientRect();
+    const potRect = potWrapper.getBoundingClientRect();
+    const fly = el.cloneNode(true);
+    fly.classList.add('fly');
+    fly.style.left = rect.left + 'px';
+    fly.style.top = rect.top + 'px';
+    fly.style.width = rect.width + 'px';
+    document.body.appendChild(fly);
+    fly.offsetHeight;
+    const targetX = potRect.left + potRect.width / 2 - rect.width / 2;
+    const targetY = potRect.top + potRect.height / 2 - rect.height / 2;
+    fly.style.left = targetX + 'px';
+    fly.style.top = targetY + 'px';
+    fly.style.transform = 'scale(0.2) rotate(360deg)';
+    fly.style.opacity = '0';
+    setTimeout(() => fly.remove(), 700);
+  }
+
+  function spawnBubbles(count) {
+    for (let i = 0; i < count; i++) {
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      const size = 8 + Math.random() * 24;
+      bubble.style.width = size + 'px';
+      bubble.style.height = size + 'px';
+      bubble.style.left = (35 + Math.random() * 30) + '%';
+      bubble.style.top = (40 + Math.random() * 10) + '%';
+      bubble.style.animationDelay = (Math.random() * 0.4) + 's';
+      bubble.style.animationDuration = (1.8 + Math.random() * 0.8) + 's';
+      steamLayer.appendChild(bubble);
+      setTimeout(() => bubble.remove(), 3000);
+    }
+  }
+
+  let speechTimer = null;
+  function showSpeech(text) {
+    speech.classList.remove('visible');
+    clearTimeout(speechTimer);
+    setTimeout(() => {
+      speech.textContent = text;
+      speech.classList.add('visible');
+    }, 200);
+    speechTimer = setTimeout(() => {
+      speech.classList.remove('visible');
+      setTimeout(() => {
+        if (droppedRealIngredients < TOTAL) {
+          speech.textContent = "Mmm. Keep 'em coming.";
+          speech.classList.add('visible');
+        }
+      }, 400);
+    }, 3500);
+  }
+
+  setTimeout(() => speech.classList.add('visible'), 500);
+
+  function triggerFinale() {
+    potWrapper.classList.add('shaking');
+    showSpeech("SHE'S READY. STAND BACK.");
+    const burstInterval = setInterval(() => spawnBubbles(8), 200);
+    setTimeout(() => {
+      clearInterval(burstInterval);
+      potWrapper.classList.remove('shaking');
+      showReveal();
+    }, 2800);
+  }
+
+  function showReveal() {
+    const reveal = document.getElementById('reveal');
+    const grid = document.getElementById('traitsGrid');
+    ingredients.forEach((item, idx) => {
+      const card = document.createElement('div');
+      card.className = 'trait-card';
+      card.style.animationDelay = (1.2 + idx * 0.08) + 's';
+      card.innerHTML = `<span class="badge">${String(item.id).padStart(2,'0')}</span>${item.text}`;
+      grid.appendChild(card);
+    });
+    reveal.classList.add('active');
+    setTimeout(spawnConfetti, 400);
+  }
+
+  function spawnConfetti() {
+    const colors = ['#7a2230', '#d96d7a', '#d4a14a', '#5c6b3a', '#b8552c', '#a87425'];
+    const reveal = document.getElementById('reveal');
+    for (let i = 0; i < 80; i++) {
+      setTimeout(() => {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.background = colors[Math.floor(Math.random() * colors.length)];
+        c.style.left = Math.random() * 100 + '%';
+        c.style.top = '-20px';
+        c.style.animationDuration = (2 + Math.random() * 2) + 's';
+        c.style.animationDelay = Math.random() * 0.5 + 's';
+        c.style.transform = `rotate(${Math.random() * 360}deg)`;
+        reveal.appendChild(c);
+        setTimeout(() => c.remove(), 5000);
+      }, i * 30);
+    }
+    setInterval(() => {
+      if (!reveal.classList.contains('active')) return;
+      for (let i = 0; i < 5; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.background = colors[Math.floor(Math.random() * colors.length)];
+        c.style.left = Math.random() * 100 + '%';
+        c.style.top = '-20px';
+        c.style.animationDuration = (2 + Math.random() * 2) + 's';
+        reveal.appendChild(c);
+        setTimeout(() => c.remove(), 4000);
+      }
+    }, 600);
+  }
+
+  // If pot.png is missing, show a friendly placeholder message
+  document.getElementById('potImg').addEventListener('error', function() {
+    this.style.display = 'none';
+    const msg = document.createElement('div');
+    msg.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;border:2px dashed #2a1a0f;border-radius:12px;font-family:Caveat,cursive;font-size:22px;color:#7a2230;background:#fff5dc;';
+    msg.innerHTML = '🖼️<br/>Drop your pot drawing<br/>at <code style="font-family:DM Mono,monospace;font-size:14px;background:#f0e3c4;padding:2px 6px;border-radius:4px;">images/pot.png</code>';
+    this.parentNode.appendChild(msg);
+  });
+</script>
+</body>
+</html>
