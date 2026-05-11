@@ -98,10 +98,11 @@ function flashImage(src) {
   const size = Math.max(potRect.width, potRect.height) * 1.5;
   const cx = potRect.left + potRect.width / 2;
   const cy = potRect.top + potRect.height / 2;
-  console.log('[flash]', src, 'pot:', potRect, 'size:', size);
 
-  img.src = src;
-  // Set everything inline so no CSS rule can fight us
+  // Cancel any pending hide from a previous flash
+  clearTimeout(flashImage._t);
+
+  // Snap to hidden state (no fade) so the previous image isn't visible mid-swap
   overlay.style.position = 'fixed';
   overlay.style.zIndex = '80';
   overlay.style.pointerEvents = 'none';
@@ -113,22 +114,31 @@ function flashImage(src) {
   overlay.style.opacity = '0';
   overlay.style.transform = 'scale(0.35) rotate(-10deg)';
 
-  // Animate IN on next frame so the transition takes effect
-  requestAnimationFrame(() => {
+  const animateIn = () => {
     requestAnimationFrame(() => {
-      overlay.style.transition = 'opacity 0.2s ease-out, transform 0.55s cubic-bezier(.34,1.56,.64,1)';
-      overlay.style.opacity = '1';
-      overlay.style.transform = 'scale(1) rotate(0deg)';
+      requestAnimationFrame(() => {
+        overlay.style.transition = 'opacity 0.2s ease-out, transform 0.55s cubic-bezier(.34,1.56,.64,1)';
+        overlay.style.opacity = '1';
+        overlay.style.transform = 'scale(1) rotate(0deg)';
+      });
     });
-  });
+    flashImage._t = setTimeout(() => {
+      overlay.style.transition = 'opacity 0.35s ease-in, transform 0.4s ease-in';
+      overlay.style.opacity = '0';
+      overlay.style.transform = 'scale(0.9) rotate(-3deg)';
+    }, 1100);
+  };
 
-  // Animate OUT after a hold
-  clearTimeout(flashImage._t);
-  flashImage._t = setTimeout(() => {
-    overlay.style.transition = 'opacity 0.35s ease-in, transform 0.4s ease-in';
-    overlay.style.opacity = '0';
-    overlay.style.transform = 'scale(0.9) rotate(-3deg)';
-  }, 1100);
+  // Swap src and wait until the new image is actually ready before animating in
+  img.onload = null;
+  img.onerror = null;
+  img.src = src;
+  if (img.complete && img.naturalWidth > 0) {
+    animateIn();
+  } else {
+    img.onload  = () => { img.onload = null; img.onerror = null; animateIn(); };
+    img.onerror = () => { img.onload = null; img.onerror = null; animateIn(); };
+  }
 }
 
 function flyToPot(el) {
