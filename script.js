@@ -9,6 +9,7 @@ function makeIngredientCard(item) {
   el.dataset.text = item.text;
   el.dataset.quip = item.quip;
   el.dataset.effect = item.effect || '#7a2230';
+  if (item.image) el.dataset.image = item.image;
   el.innerHTML = `<span class="num">${String(item.id).padStart(2, '0')}</span> ${item.text}`;
   return el;
 }
@@ -63,6 +64,7 @@ function handleDrop(el) {
   if (usedSet.has(id)) return;
   const quip = el.dataset.quip;
   const effect = el.dataset.effect;
+  const image = el.dataset.image;
 
   flyToPot(el);
   setTimeout(() => { el.classList.add('used'); usedSet.add(id); }, 50);
@@ -76,6 +78,7 @@ function handleDrop(el) {
 
     spawnBubbles(6);
     showSpeech(quip);
+    if (image) flashImage(image);
 
     droppedRealIngredients++;
     const pct = (droppedRealIngredients / TOTAL) * 100;
@@ -83,6 +86,17 @@ function handleDrop(el) {
     progressText.textContent = `${droppedRealIngredients} / ${TOTAL}`;
     if (droppedRealIngredients === TOTAL) setTimeout(triggerFinale, 1400);
   }, 550);
+}
+
+function flashImage(src) {
+  const overlay = document.getElementById('flashOverlay');
+  const img = document.getElementById('flashImg');
+  img.src = src;
+  overlay.classList.remove('visible');
+  void overlay.offsetWidth;
+  overlay.classList.add('visible');
+  clearTimeout(flashImage._t);
+  flashImage._t = setTimeout(() => overlay.classList.remove('visible'), 1100);
 }
 
 function flyToPot(el) {
