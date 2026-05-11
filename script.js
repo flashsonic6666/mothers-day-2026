@@ -91,23 +91,44 @@ function handleDrop(el) {
 function flashImage(src) {
   const overlay = document.getElementById('flashOverlay');
   const img = document.getElementById('flashImg');
+  if (!overlay || !img) { console.warn('[flash] overlay/img element missing'); return; }
 
   // Anchor the flash on top of the pot, ~1.5x the pot's size
   const potRect = potWrapper.getBoundingClientRect();
   const size = Math.max(potRect.width, potRect.height) * 1.5;
   const cx = potRect.left + potRect.width / 2;
   const cy = potRect.top + potRect.height / 2;
+  console.log('[flash]', src, 'pot:', potRect, 'size:', size);
+
+  img.src = src;
+  // Set everything inline so no CSS rule can fight us
+  overlay.style.position = 'fixed';
+  overlay.style.zIndex = '80';
+  overlay.style.pointerEvents = 'none';
   overlay.style.width  = size + 'px';
   overlay.style.height = size + 'px';
   overlay.style.left   = (cx - size / 2) + 'px';
   overlay.style.top    = (cy - size / 2) + 'px';
+  overlay.style.transition = 'none';
+  overlay.style.opacity = '0';
+  overlay.style.transform = 'scale(0.35) rotate(-10deg)';
 
-  img.src = src;
-  overlay.classList.remove('visible');
-  void overlay.offsetWidth;  // force reflow so the animation restarts
-  overlay.classList.add('visible');
+  // Animate IN on next frame so the transition takes effect
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      overlay.style.transition = 'opacity 0.2s ease-out, transform 0.55s cubic-bezier(.34,1.56,.64,1)';
+      overlay.style.opacity = '1';
+      overlay.style.transform = 'scale(1) rotate(0deg)';
+    });
+  });
+
+  // Animate OUT after a hold
   clearTimeout(flashImage._t);
-  flashImage._t = setTimeout(() => overlay.classList.remove('visible'), 1400);
+  flashImage._t = setTimeout(() => {
+    overlay.style.transition = 'opacity 0.35s ease-in, transform 0.4s ease-in';
+    overlay.style.opacity = '0';
+    overlay.style.transform = 'scale(0.9) rotate(-3deg)';
+  }, 1100);
 }
 
 function flyToPot(el) {

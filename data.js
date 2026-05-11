@@ -19,7 +19,7 @@
 const ingredients = [
   { id: 1,  text: "Professional vibe coder",                    quip: "I'm sure Dad is proud (right Dad?).",                  effect: "#7a2230", image: "images/mom_vibe_code.jpg" },
   { id: 2,  text: "Proud Tesla owner",                          quip: "Adding silent horsepower. The simmer just got electric.",   effect: "#5c6b3a", image: "images/mom_tesla.jpg" },
-  { id: 3,  text: "Elon Musk superfan",                         quip: "Spicy. The pot has Opinions™ now.",                         effect: "#b8552c", image: "images/mom_elon_musk.jpg" },
+  { id: 3,  text: "Elon Musk superfan",                         quip: "Spicy. The pot has some very interesting Opinions™ now.",                         effect: "#b8552c", image: "images/mom_elon_musk.jpg" },
   { id: 4,  text: "Un-scammable",                               quip: "Scam-shield engaged. No one is getting those 3 extra dollars from Mom.",               effect: "#7a2230" },
   { id: 5,  text: "Consumed a cactus taco",                     quip: "A prickly sensation has been added into the pot. Maybe not the best time to take a drink.",            effect: "#a87425" },
   { id: 6,  text: "Backyard pickleball enthusiast",             quip: "*THWACK* Athletic spirit added. Built up from many years of walking uphill, both ways, to get to school.",   effect: "#5c6b3a", image: "images/mom_pickleball.jpg" },
