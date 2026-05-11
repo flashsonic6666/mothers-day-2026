@@ -31,5 +31,5 @@ const ingredients = [
   { id: 12, text: "Cooks very tasty 牛肉",                        quip: "Somewhere from within the pot, a distressed moo can be heard.",   effect: "#b8552c", image: "images/mom_cooking_niu_rou.jpg" },
   { id: 13, text: 'Makes jokes like "Rock!... Paper!"',         quip: "Comedy gold detected. The pot is wheezing with laughter.",                effect: "#d4a14a" },
   { id: 14, text: "Gives excellent life advice",                quip: "Sage essence infused. Pot now whispers wisdom.",            effect: "#5c6b3a" },
-  { id: 15, text: "Best mom in the world",                      quip: "Hold on. Hold ON. Something incredible is happening.",      effect: "#7a2230" },
+  { id: 15, text: "Best mom in the world",                      quip: "Hold on. Hold ON. Something incredible is happening.",      effect: "#7a2230", image: "images/mom_best.jpg" },
 ];
